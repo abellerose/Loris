@@ -401,8 +401,6 @@ class FieldSelector extends Component {
     let isFile;
     let fieldName;
     let category;
-    console.log('this.state.categoryFields[this.state.selectedCategory] is ');
-    console.log(typeof this.state.categoryFields[this.state.selectedCategory]);
     for ([i] of Object.entries(
       this.state.categoryFields[this.state.selectedCategory]
     )) {
@@ -435,8 +433,6 @@ class FieldSelector extends Component {
     let fieldName;
     let category;
     let isFile;
-    console.log('this.state.categoryFields[this.state.selectedCategory] is ');
-    console.log(typeof this.state.categoryFields[this.state.selectedCategory]);
     for ([i] of Object.entries(
       this.state.categoryFields[this.state.selectedCategory]
     )) {
@@ -465,9 +461,6 @@ class FieldSelector extends Component {
     if (this.state.selectedCategory
       && this.props.selectedFields[this.state.selectedCategory]
     ) {
-      console.log('this.props.selectedFields[this.state.selectedCategory] is');
-      console.log(
-        typeof this.props.selectedFields[this.state.selectedCategory]);
       for (const [field] of Object.entries(
         this.props.selectedFields[this.state.selectedCategory]
       )) {

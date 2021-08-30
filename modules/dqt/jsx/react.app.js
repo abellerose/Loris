@@ -127,8 +127,6 @@ class DataQueryApp extends Component {
 
     // Load the save queries' details
     let promises = [];
-    console.log('this.state.queryIDs is ');
-    console.log(typeof this.state.queryIDs);
     for (const [key] of Object.entries(this.state.queryIDs)) {
       for (let i = 0; i < this.state.queryIDs[key].length; i += 1) {
         let curRequest;
@@ -458,16 +456,12 @@ class DataQueryApp extends Component {
           selectedFields[fieldSplit[0]] = {};
           selectedFields[fieldSplit[0]][fieldSplit[1]] = {};
           selectedFields[fieldSplit[0]].allVisits = {};
-          console.log('this.props.Visits is');
-          console.log(typeof this.props.Visits);
           for (const [key] of Object.entries(this.props.Visits)) {
             selectedFields[fieldSplit[0]].allVisits[key] = 1;
             selectedFields[fieldSplit[0]][fieldSplit[1]][key] = [key];
           }
         } else {
           selectedFields[fieldSplit[0]][fieldSplit[1]] = {};
-          console.log('this.props.Visits is');
-          console.log(typeof this.props.Visits);
           for (const [key] of Object.entries(this.props.Visits)) {
             selectedFields[fieldSplit[0]].allVisits[key]++;
             selectedFields[fieldSplit[0]][fieldSplit[1]][key] = [key];
@@ -478,8 +472,6 @@ class DataQueryApp extends Component {
       // Query was saved in the new format
       filterState = criteria;
       selectedFields = fields ? fields : {};
-      console.log('fields is ');
-      console.log(typeof fields);
       for (const [instrument] of Object.entries(fields)) {
         for (const [field] in Object.entries(fields[instrument])) {
           if (field !== 'allVisits') {
@@ -582,8 +574,6 @@ class DataQueryApp extends Component {
         );
         // Add all visits to the given category, initializing their counts to 1
         selectedFields[category].allVisits = {};
-        console.log('this.props.Visits is ');
-        console.log(typeof this.props.Visits);
         for (const [key] of Object.entries(this.props.Visits)) {
           selectedFields[category].allVisits[key] = 1;
         }
@@ -597,8 +587,6 @@ class DataQueryApp extends Component {
         }
       } else if (selectedFields[category][fieldName]) {
         // Remove the field from the selectedFields
-        console.log('selectedFields[category][fieldName] is ');
-        console.log(typeof selectedFields[category][fieldName]);
         for (
           const [key] of Object.entries(selectedFields[category][fieldName])
           ) {
@@ -632,8 +620,6 @@ class DataQueryApp extends Component {
         }
 
         // Increment the visit count for the visit, setting it to 1 if doesn't exist
-        console.log('selectedFields[category].allVisits is ');
-        console.log(typeof selectedFields[category].allVisits);
         for (
           const [key] of Object.entries(selectedFields[category].allVisits)
           ) {
@@ -714,8 +700,6 @@ class DataQueryApp extends Component {
               sessionInfo.push(this.state.filter.session[j]);
             }
           } else {
-            console.log('this.state.selectedFields[category].allVisits is ');
-            console.log(typeof this.state.selectedFields[category].allVisits);
             for (const [key] of Object.entries(
                 this.state.selectedFields[category].allVisits
             )) {
@@ -806,8 +790,6 @@ class DataQueryApp extends Component {
       }
 
       // Build the table rows, using the session data as the row identifier
-      console.log('sessiondata is ');
-      console.log(typeof sessiondata);
       for (const [session] of Object.entries(sessiondata)) {
         currow = [];
         for (i = 0; fields && i < fields.length; i += 1) {
@@ -851,8 +833,6 @@ class DataQueryApp extends Component {
       let fieldSplit;
 
       // Loop trough session data building the row identifiers and desired visits
-      console.log('sessiondata is ');
-      console.log(typeof sessiondata);
       for (const [session] of Object.entries(sessiondata)) {
         temp = session.split(',');
         visit = temp[1];
@@ -868,8 +848,6 @@ class DataQueryApp extends Component {
       // Loop through the desired fields, adding a row header for each visit if it
       // has been selected in the build phase
       for (i = 0; fields && i < fields.length; i += 1) {
-        console.log('Visits is ');
-        console.log(typeof Visits);
         for (const [visit] of Object.entries(Visits)) {
           temp = fields[i].split(',');
           instrument = this.state.selectedFields[temp[0]];
@@ -883,12 +861,8 @@ class DataQueryApp extends Component {
       }
 
       // Build the row data for the giving identifiers and headers
-      console.log('Identifiers is ');
-      console.log(typeof Identifiers);
       for (const [identifier] of Object.entries(Identifiers)) {
         currow = [];
-        console.log('RowHeaders is ');
-        console.log(typeof RowHeaders);
         for (const [colHeader] of Object.entries(RowHeaders)) {
           temp = Identifiers[identifier]
             + ','
