@@ -8,7 +8,7 @@ core section.***
 - ***When possible please provide the number of the pull request(s) containing the 
 changes in the following format: PR #1234***
 
-##LORIS 24.0 (Release Date: ??)
+## LORIS 24.0 (Release Date: ??)
 ### Core
 - New classes to describe a data dictionary (PR #6938)
 #### Features
@@ -24,8 +24,10 @@ requesting a new account and will be displayed in the User Accounts module (PR #
 - Candidate's age can be retrieved from the Candidate class in days, months, or years (PR #5945)
 - Addition of autoSelect prop to React SelectElement allows for auto-selection of only available select option (PR #6156)
 - An `AcquisitionDate` field has been added to the `files` table (PR #6892)
+- The default value of the ScannerID field of the mri_protocol table is now NULL instead of 0 (PR #7496).
 #### Bug Fixes
-- *Add item here*
+- The default value of the `ScannerID` field of the `mri_protocol` table is now `NULL` instead of `0`. This means that if a protocol is valid on all the study's scanners, then `ScannerID` of the protocol should be set to `NULL` (PR #7496)
+- The `EchoTime` field has been added to the following tables: `MRICandidateErrors`, and `mri_violations_log`. `EchoTime` is necessary to distiguish MINC files for multi-echo aquisitions (PR #7515).
 ### Modules
 #### Help Editor
 - Cleaned up the deprecated column `Parent Topic` (PR #7025)
@@ -39,7 +41,7 @@ requesting a new account and will be displayed in the User Accounts module (PR #
 #### API Documentation (**New Module**)
 - New module mostly intended for developers, this module provides a user interface to inspect and try LORIS modules API.
 ### Clean Up
-- *Add item here*
+- Removal of unused variables and unnecessary branching from `getBattery()` and `getBatteryVerbose()` functions (PR #7167)
 ### Notes For Existing Projects
 - New function Candidate::getSubjectForMostRecentVisit replaces Utility::getSubprojectIDUsingCandID, adding ability to determine which subproject a candidate belongs to given their most recent visit.
 - LINST instrument class was modified to implement the getFullName() and getSubtestList() functions thus making entries in the test_names and instrument_subtests tables respectively unnecessary for LINST instruments (PR #7169)

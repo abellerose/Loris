@@ -1434,10 +1434,20 @@ class DateElement extends Component {
     let disabled = this.props.disabled ? 'disabled' : null;
     let required = this.props.required ? 'required' : null;
     let requiredHTML = null;
+    let errorMessage = null;
+    let elementClass = 'row form-group';
 
     // Add required asterix
     if (required) {
       requiredHTML = <span className="text-danger">*</span>;
+    }
+
+    // Add error message
+    if (this.props.hasError
+       || (this.props.required && this.props.value === '')
+    ) {
+      errorMessage = <span>{this.props.errorMessage}</span>;
+      elementClass = elementClass + ' has-error';
     }
 
     // Check if props minYear and maxYear are valid values if supplied
@@ -1470,7 +1480,7 @@ class DateElement extends Component {
     }
 
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.label}>
           {this.props.label}
           {requiredHTML}
@@ -1488,6 +1498,7 @@ class DateElement extends Component {
             required={required}
             disabled={disabled}
           />
+          {errorMessage}
         </div>
       </div>
     );
@@ -1504,19 +1515,23 @@ DateElement.propTypes = {
   dateFormat: PropTypes.string,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
+  hasError: PropTypes.bool,
+  errorMessage: PropTypes.string,
   onUserInput: PropTypes.func,
 };
 
 DateElement.defaultProps = {
   name: '',
   label: '',
-  value: '',
+  value: undefined,
   id: null,
   maxYear: '9999',
   minYear: '1000',
   dateFormat: 'YMd',
   disabled: false,
   required: false,
+  hasError: false,
+  errorMessage: 'The field is required!',
   onUserInput: function() {
     console.warn('onUserInput() callback is not set');
   },
