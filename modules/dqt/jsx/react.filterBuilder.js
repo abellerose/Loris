@@ -690,6 +690,8 @@ class FilterBuilder extends Component {
    * @param {object} data
    */
   defineCSVCandidates(type, data) {
+    console.log('this.props.getAllSessions() is ');
+    console.log(this.props.getAllSessions());
     let session = [];
     let children = [];
     for (const item of data) {
@@ -710,6 +712,8 @@ class FilterBuilder extends Component {
       session: session,
       children: children,
     };
+    console.log('results: ');
+    console.log(results);
     fetch(
       window.location.origin
       + '/dqt/DemographicIdentifierFiltersBuilder',
