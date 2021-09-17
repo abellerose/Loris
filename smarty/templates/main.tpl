@@ -153,11 +153,6 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{$baseurl}/my_preferences/">
-                                            My Preferences
-                                        </a>
-                                    </li>
-                                    <li>
                                         <a href="{$baseurl}/?logout=true">
                                             Log Out
                                         </a>
