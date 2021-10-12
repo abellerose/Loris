@@ -18,3 +18,18 @@
 /*.col-xs-12 {*/
 /*    width: 100%;*/
 /*}*/
+.loris-logo {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+}
+.study-title {
+  font-size: 16pt;
+  display: inline-block;
+}
+.footer {
+  width: 100%;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+}
