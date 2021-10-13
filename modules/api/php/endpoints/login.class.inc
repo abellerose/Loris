@@ -171,7 +171,7 @@ class Login extends Endpoint
             "iat"  => time(),
             "nbf"  => time(),
             // Expire in 1 day
-            "exp"  => time() + 86400,
+            "exp"  => time() + 604800,
             // Additional payload data
             "user" => $user,
         );
