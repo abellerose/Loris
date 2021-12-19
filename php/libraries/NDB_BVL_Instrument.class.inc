@@ -30,7 +30,7 @@ abstract class NDB_BVL_Instrument extends NDB_Page
      * JSON format from the "Data" column of the flag table, or
      * from the traditional SQL tables.
      */
-    protected $jsonData = false;
+    protected $jsonData = true;
 
     /**
      * HTML_Quickform object
@@ -1152,7 +1152,7 @@ abstract class NDB_BVL_Instrument extends NDB_Page
     function _getQuickformDate(string $databaseValue)
     {
         throw new Exception(
-            "The function _getQuickformDate has been deprecated. 
+            "The function _getQuickformDate has been deprecated.
             Please contact LORIS developer mail list for support."
         );
     }
