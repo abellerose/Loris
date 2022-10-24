@@ -1085,9 +1085,7 @@ abstract class NDB_BVL_Instrument extends NDB_Page
                 'examinerID'
             );
         }
-        $examiners = [
-            null => ''
-        ];
+        $examiners = [];
         if (is_array($results) && !empty($results)) {
             foreach ($results AS $eid => $row) {
                 $name = $row['full_name'];
@@ -1654,7 +1652,7 @@ abstract class NDB_BVL_Instrument extends NDB_Page
     function getDataEntryCompletionStatus(): string
     {
         $data = NDB_BVL_Instrument::loadInstanceData($this);
-        return $data["Data_entry_completion_status"] ?? '';
+        return $data["Data_entry_completion_status"];
     }
 
 

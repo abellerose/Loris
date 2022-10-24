@@ -73,14 +73,14 @@ $DB->run(
 );
 
 $DB->delete("parameter_type_category", array("Type" => "Instrument"));
-
+   
 print "Cleared data from BVL instruments\n";
 
 print "Reading instruments\n";
 //Read the ip_output.txt staging file.
 $fp = fopen(__DIR__."/../ip_output.txt", "r");
 if (!$fp) {
-    print "There was an issue opening the ip_output file. Ensure the
+    print "There was an issue opening the ip_output file. Ensure the 
     file exists and the permissions are properly set.\n";
     die();
 }
@@ -100,26 +100,16 @@ $parameterNames = array();
 foreach ($instruments AS $instrument) {
     $catId = "";
     $table = "";
-    $testname = "";
     $items = explode("\n", trim($instrument));
     foreach ($items AS $item) {
         $paramId = "";
         $bits    = explode("{@}", trim($item));
         switch($bits[0]){
-	        case "testname":
-                  $testname = $bits[1];
-                  print "Instrument: $testname\n";
-                  break;
+	          case "testname":
+		          break;
             case "table":
                 $table = $bits[1];
-                //`testname` was only recently added to the lorisform parser, for
-                //backwards compatibility, instruments with no testname parameter
-                //should assume the testname from the `table` name (to maintain
-                //status quo) although it might be incorrect since instrument names
-                //and table names could be different by design.
-                if (empty($testname)) {
-                    $testname = $table;
-                }
+                print "Instrument: $table\n";
                 break;
 
             case "title":
@@ -127,7 +117,7 @@ foreach ($instruments AS $instrument) {
                 // Check if there's already an entry with the same name and reuse same ID
                 // insertIgnore does not work here since name is not a Unique key in the database
                 $catId = $DB->pselectOne(
-                    "SELECT ParameterTypeCategoryID
+                    "SELECT ParameterTypeCategoryID 
                        FROM parameter_type_category
                        WHERE Name=:name AND Type=:type",
                     array(
@@ -163,7 +153,7 @@ foreach ($instruments AS $instrument) {
                     // the name from the examiner id
                     $bits[0] = "varchar(255)";
                 } else if ($bits[0]=="select") {
-                    $bits[0] = enumizeOptions($bits[3], $testname, $bits[1]);
+                    $bits[0] = enumizeOptions($bits[3], $table, $bits[1]);
                 } else if ($bits[0]=="textarea") {
                     $bits[0] ="text";
                 } else if ($bits[0]=="text") {
@@ -181,10 +171,10 @@ foreach ($instruments AS $instrument) {
                     continue;
                 }
 
-                print "\tInserting $testname $bits[1]\n";
+                print "\tInserting $table $bits[1]\n";
                 $bits[2] = htmlspecialchars($bits[2]);
                 //find values to insert
-                $Name = $testname . "_" . $bits[1];
+                $Name = $table . "_" . $bits[1];
                 if (in_array($Name, $parameterNames, true)) {
                     // this specific table_field combination was already inserted, skip.
                     continue;
@@ -195,7 +185,7 @@ foreach ($instruments AS $instrument) {
                     "Type"        => $bits[0],
                     "Description" => $bits[2],
                     "SourceField" => $bits[1],
-                    "SourceFrom"  => $testname,
+                    "SourceFrom"  => $table,
                     "Queryable"   => "1",
                 );
 
@@ -235,13 +225,13 @@ foreach ($instruments AS $instrument) {
         }
     }
 
-    if (empty($testname)) {
+    if (empty($table)) {
         continue;
     }
 
     // INSTRUMENT VALIDITY
-    print "\tInserting validity for $testname\n";
-    $Name = $testname . "_Validity";
+    print "\tInserting validity for $table\n";
+    $Name = $table . "_Validity";
 
     if (in_array($Name, $parameterNames, true)) {
         // this specific table_validity combination was already inserted, skip.
@@ -253,9 +243,9 @@ foreach ($instruments AS $instrument) {
     $query_params = array(
         "Name"        => $Name,
         "Type"        => $_type_enum,
-        "Description" => "Validity of $testname",
+        "Description" => "Validity of $table",
         "SourceField" => "Validity",
-        "SourceFrom"  => $testname,
+        "SourceFrom"  => $table,
         "Queryable"   => "1",
     );
 
@@ -285,8 +275,8 @@ foreach ($instruments AS $instrument) {
     );
 
     // INSTRUMENT ADMINISTRATION
-    print "\tInserting administration for $testname\n";
-    $Name = $testname . "_Administration";
+    print "\tInserting administration for $table\n";
+    $Name = $table . "_Administration";
     if (in_array($Name, $parameterNames, true)) {
         // this specific table__Administration combination was already inserted, skip.
         continue;
@@ -296,9 +286,9 @@ foreach ($instruments AS $instrument) {
     $query_params = array(
         "Name"        => $Name,
         "Type"        => $_type_enum,
-        "Description" => "Administration for $testname",
+        "Description" => "Administration for $table",
         "SourceField" => "Administration",
-        "SourceFrom"  => $testname,
+        "SourceFrom"  => $table,
         "Queryable"   => "1",
     );
 
@@ -356,12 +346,12 @@ echo "\n\nData Dictionary generation complete:  $tblCount new categories added"
  * enums
  *
  * @param string $options The line of the ip_output.txt to enumize
- * @param string $testname   The table containing this line
+ * @param string $table   The table containing this line
  * @param string $name    The name of the field being enumized
  *
  * @return string A valid MySQL format enum field string
  */
-function enumizeOptions($options, $testname, $name)
+function enumizeOptions($options, $table, $name)
 {
     $options =explode("{-}", $options);
     foreach ($options as $option) {
@@ -371,7 +361,7 @@ function enumizeOptions($options, $testname, $name)
         }
     }
     if (!is_array($enum)) {
-        echo "$testname $name $options\n";
+        echo "$table $name $options\n";
     }
     $enum =implode(",", $enum);
     return "enum($enum)";
