@@ -86,7 +86,11 @@ class AcknowledgementsIndex extends Component {
   fetchData() {
     return fetch(this.props.dataURL, {credentials: 'same-origin'})
       .then((resp) => resp.json())
-      .then((data) => this.setState({data}))
+      .then((data) => {
+        console.log('data is ');
+        console.log(data);
+        this.setState({data});
+      })
       .catch((error) => {
         this.setState({error: true});
         console.error(error);
@@ -383,6 +387,7 @@ class AcknowledgementsIndex extends Component {
         options: options.presents,
       }},
     ];
+    console.log(fields);
     const actions = [
       {
         name: 'addAcknowledgement',

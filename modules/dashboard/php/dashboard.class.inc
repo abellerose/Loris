@@ -72,6 +72,7 @@ class Dashboard extends \NDB_Form
         $this->mainwidgets  = [];
         foreach ($this->modules as $module) {
             if ($module->hasAccess($user)) {
+                // slows login possibly
                 $widgets = $module->getWidgets('dashboard', $user, []);
                 foreach ($widgets as $widget) {
                     if (!($widget instanceof Widget)) {
