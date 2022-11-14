@@ -119,6 +119,7 @@ class NDB_Config
         // first check for a project/config.xml, then check for the config
         // file in a standard unix filesystem location ->  /etc/loris/config.xml
 
+        putenv("LORIS_DB_CONFIG=/Users/alizee/Development/GitHub/McGill/config.xml");
         $env = getenv('LORIS_DB_CONFIG');
         if (!empty($env)) {
             $file = $env;
