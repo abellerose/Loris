@@ -356,9 +356,8 @@ class DashboardTest extends LorisIntegrationTest
     {
         $this->safeGet($this->url . '/dashboard/');
         $views = $this->safeFindElement(
-            WebDriverBy::Xpath(
-                "//*[@id='lorisworkspace']/div[1]".
-                    "/div[2]/div[1]/div/button"
+            WebDriverBy::cssSelector(
+                "#statistics_widgets .panel:nth-child(1) .views button"
             )
         );
         $views->click();
@@ -372,11 +371,14 @@ class DashboardTest extends LorisIntegrationTest
         $assertText2 = $this->safeFindElement(
             WebDriverBy::XPath(
                 "//*[@id='lorisworkspace']/div[1]".
-                    "/div[2]/div[1]/div/ul/li[2]/a"
+                "/div[2]/div[1]/div/ul/li[2]/a"
             )
         )->getText();
-        $this->assertStringContainsString("View overall recruitment", $assertText1);
-        $this->assertStringContainsString("View site breakdown", $assertText2);
+        $this->assertStringContainsString("Recruitment - overall", $assertText1);
+        $this->assertStringContainsString(
+            "Recruitment - site breakdown",
+            $assertText2
+        );
     }
 
     /**
@@ -667,8 +669,11 @@ class DashboardTest extends LorisIntegrationTest
     {
         $this->safeGet($this->url . '/dashboard/');
         $testText = $this->safeFindElement(
-            WebDriverBy::cssSelector("#scan-line-chart-panel")
+            WebDriverBy::cssSelector(
+                "#statistics_studyprogression .panel-body div:nth-child(2)"
+            )
         )->getText();
+
         $this->assertStringContainsString(
             "Scan sessions per site",
             $testText
