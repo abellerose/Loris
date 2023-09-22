@@ -795,7 +795,7 @@ class NDB_PageTest extends TestCase
         $this->assertEquals(
             [
                 '/js/jquery/jquery-1.11.0.min.js',
-                '/js/helpHandler.js',
+                '/js/loris-scripts.js',
                 '/js/modernizr/modernizr.min.js',
                 '/js/polyfills.js',
                 '/vendor/js/react/react.production.min.js',
@@ -805,10 +805,9 @@ class NDB_PageTest extends TestCase
                 '/js/jquery.fileupload.js',
                 '/bootstrap/js/bootstrap.min.js',
                 '/js/components/Breadcrumbs.js',
-                '/vendor/sweetalert/sweetalert.min.js',
                 '/js/util/queryString.js',
                 '/js/components/Form.js',
-                '/js/components/Markdown.js'
+                '/js/components/Help.js',
             ],
             $this->_page->getJSDependencies()
         );
@@ -831,8 +830,7 @@ class NDB_PageTest extends TestCase
             [
                 '/bootstrap/css/bootstrap.min.css',
                 '/bootstrap/css/custom-css.css',
-                '/js/jquery/datepicker/datepicker.css',
-                '/vendor/sweetalert/sweetalert.css'
+                '/js/jquery/datepicker/datepicker.css'
             ],
             $this->_page->getCSSDependencies()
         );

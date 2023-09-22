@@ -1,6 +1,7 @@
 import PasswordExpired from './passwordExpiry';
 import RequestAccount from './requestAccount';
 import ResetPassword from './resetPassword';
+import {createRoot} from 'react-dom/client';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Loader from 'Loader';
@@ -195,7 +196,7 @@ class Login extends Component {
           <FormElement
             name={'loginIndex'}
             action={''}
-            fileUpload={'false'}
+            fileUpload={false}
             onSubmit={this.handleSubmit}
           >
             <TextboxElement
@@ -300,21 +301,27 @@ class Login extends Component {
 
 Login.propTypes = {
   module: PropTypes.string,
+  defaultmode: PropTypes.string,
+  defaultRequestFirstName: PropTypes.string,
+  defaultRequestLastName: PropTypes.string,
+  defaultRequestEmail: PropTypes.string,
 };
 
 window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const getParam = (name, deflt) => {
-      return params.has(name) ? params.get(name) : deflt;
+    return params.has(name) ? params.get(name) : deflt;
   };
-  ReactDOM.render(
+
+  createRoot(
+    document.getElementsByClassName('main-content')[0]
+  ).render(
     <Login
       defaultmode={getParam('page', null)}
       defaultRequestFirstName={getParam('firstname', '')}
       defaultRequestLastName={getParam('lastname', '')}
       defaultRequestEmail={getParam('email', '')}
       module={'login'}
-    />,
-    document.getElementsByClassName('main-content')[0]
+    />
   );
 });

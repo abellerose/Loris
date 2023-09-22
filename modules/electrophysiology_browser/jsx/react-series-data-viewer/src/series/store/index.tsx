@@ -8,6 +8,7 @@ import {cursorReducer} from './state/cursor';
 import {panelReducer} from './state/rightPanel';
 import {timeSelectionReducer} from './state/timeSelection';
 import {montageReducer} from './state/montage';
+import {channelsReducer} from './state/channels';
 import {createDragBoundsEpic} from './logic/dragBounds';
 import {createTimeSelectionEpic} from './logic/timeSelection';
 import {createFetchChunksEpic} from './logic/fetchChunks';
@@ -25,6 +26,7 @@ import {
   createLowPassFilterEpic,
   createHighPassFilterEpic,
 } from './logic/highLowPass';
+import {createCursorInteractionEpic} from './logic/cursorInteraction';
 
 export const rootReducer = combineReducers({
   bounds: boundsReducer,
@@ -35,6 +37,7 @@ export const rootReducer = combineReducers({
   rightPanel: panelReducer,
   timeSelection: timeSelectionReducer,
   montage: montageReducer,
+  channels: channelsReducer,
 });
 
 export const rootEpic = combineEpics(
@@ -43,12 +46,13 @@ export const rootEpic = combineEpics(
     const {interval} = bounds;
     return {interval, timeSelection};
   }),
-  createFetchChunksEpic(({bounds, dataset}) => ({
+  createFetchChunksEpic(({bounds, dataset, channels}) => ({
     bounds,
     dataset,
+    channels,
   })),
-  createPaginationEpic(({dataset}) => {
-    const {limit, channelMetadata, channels} = dataset;
+  createPaginationEpic(({dataset, channels}) => {
+    const {limit, channelMetadata} = dataset;
     return {limit, channelMetadata, channels};
   }),
   createScaleAmplitudesEpic(({bounds}) => {
@@ -70,6 +74,10 @@ export const rootEpic = combineEpics(
   createActiveEpochEpic(({dataset}) => {
     const {epochs} = dataset;
     return {epochs};
+  }),
+  createCursorInteractionEpic(({cursor}) => {
+    const {hoveredChannels} = cursor;
+    return {hoveredChannels};
   }),
 );
 

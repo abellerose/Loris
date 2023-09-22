@@ -1,3 +1,4 @@
+import {createRoot} from 'react-dom/client';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
@@ -139,10 +140,11 @@ SurveyAccountsIndex.propTypes = {
 };
 
 window.addEventListener('load', () => {
-  ReactDOM.render(
+  createRoot(
+    document.getElementById('lorisworkspace')
+  ).render(
     <SurveyAccountsIndex
       dataURL={`${loris.BaseURL}/survey_accounts/?format=json`}
-    />,
-    document.getElementById('lorisworkspace')
+    />
   );
 });

@@ -1,3 +1,4 @@
+import {createRoot} from 'react-dom/client';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
@@ -102,7 +103,7 @@ class MediaIndex extends Component {
   formatColumn(column, cell, row) {
     cell = this.mapColumn(column, cell);
     // Set class to 'bg-danger' if file is hidden.
-    const style = (row['File Visibility'] === '1') ? 'bg-danger' : '';
+    const style = (row['File Visibility'] === 'hidden') ? 'bg-danger' : '';
     let result = <td className={style}>{cell}</td>;
     switch (column) {
     case 'File Name':
@@ -282,11 +283,12 @@ MediaIndex.propTypes = {
 };
 
 window.addEventListener('load', () => {
-  ReactDOM.render(
+  createRoot(
+    document.getElementById('lorisworkspace')
+  ).render(
     <MediaIndex
       dataURL={`${loris.BaseURL}/media/?format=json`}
       hasPermission={loris.userHasPermission}
-    />,
-    document.getElementById('lorisworkspace')
+    />
   );
 });

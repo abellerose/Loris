@@ -1,5 +1,5 @@
 /* exported FormElement, FieldsetElement, SelectElement, TagsElement, SearchableDropdown, TextareaElement,
-TextboxElement, PasswordElement, DateElement, NumericElement, FileElement, StaticElement, HeaderElement, LinkElement,
+TextboxElement, PasswordElement, DateElement, DateTimeElement, NumericElement, FileElement, StaticElement, HeaderElement, LinkElement,
 CheckboxElement, ButtonElement, LorisElement
 */
 
@@ -148,6 +148,8 @@ FormElement.propTypes = {
   }),
   onSubmit: PropTypes.func,
   onUserInput: PropTypes.func,
+  children: PropTypes.node,
+  fileUpload: PropTypes.bool,
 };
 
 FormElement.defaultProps = {
@@ -237,6 +239,7 @@ FieldsetElement.propTypes = {
   columns: PropTypes.number,
   name: PropTypes.string,
   legend: PropTypes.string,
+  children: PropTypes.node,
 };
 
 FieldsetElement.defaultProps = {
@@ -436,6 +439,7 @@ SearchableDropdown.propTypes = {
   errorMessage: PropTypes.string,
   placeHolder: PropTypes.string,
   onUserInput: PropTypes.func,
+  sortByValue: PropTypes.bool,
 };
 
 SearchableDropdown.defaultProps = {
@@ -505,18 +509,20 @@ class SelectElement extends Component {
    * @param {object} e - Event
    */
   handleChange(e) {
-    let value = e.target.value;
+    let value = null;
     let options = e.target.options;
     const numOfOptions = options.length;
 
     // Multiple values
-    if (this.props.multiple && numOfOptions > 1) {
+    if (this.props.multiple) {
       value = [];
       for (let i = 0, l = numOfOptions; i < l; i++) {
         if (options[i].selected) {
           value.push(options[i].value);
         }
       }
+    } else {
+      value = e.target.value;
     }
 
     this.props.onUserInput(this.props.name, value);
@@ -661,6 +667,7 @@ SelectElement.propTypes = {
   onUserInput: PropTypes.func,
   noMargins: PropTypes.bool,
   placeholder: PropTypes.string,
+  sortByValue: PropTypes.bool,
 };
 
 SelectElement.defaultProps = {
@@ -1043,6 +1050,7 @@ class TextareaElement extends Component {
             name={this.props.name}
             id={this.props.id}
             value={this.props.value || ''}
+            placeholder={this.props.placeholder}
             required={required}
             disabled={disabled}
             onChange={this.handleChange}
@@ -1058,6 +1066,7 @@ TextareaElement.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   value: PropTypes.string,
+  placeholder: PropTypes.string,
   id: PropTypes.string,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
@@ -1070,6 +1079,7 @@ TextareaElement.defaultProps = {
   name: '',
   label: '',
   value: '',
+  placeholder: '',
   id: null,
   disabled: false,
   required: false,
@@ -1533,25 +1543,6 @@ class DateElement extends Component {
     if (this.props.maxYear === '' || this.props.maxYear === null) {
       maxYear = '9999';
     }
-    let monthInputs = $('input[type=month][name=' + this.props.name+']');
-    monthInputs.datepicker({
-      dateFormat: 'yy-mm',
-      changeMonth: true,
-      changeYear: true,
-      yearRange: minYear + ':' + maxYear,
-      constrainInput: true,
-      onChangeMonthYear: (y, m, d) => {
-        // Update date in the input field
-        $(this).datepicker('setDate', new Date(y, m - 1, d.selectedDay));
-      },
-      onSelect: (dateText, picker) => {
-        this.props.onUserInput(this.props.name, dateText);
-      },
-    });
-    monthInputs.attr('placeholder', 'yyyy-mm');
-    monthInputs.on('keydown paste', (e) => {
-      e.preventDefault();
-    });
   }
 
   /**
@@ -1632,7 +1623,7 @@ class DateElement extends Component {
           {requiredHTML}
         </label>;
         classSz = 'col-sm-9';
-    };
+    }
     return (
       <div className={elementClass}>
         {labelHTML}
@@ -1661,8 +1652,8 @@ DateElement.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   id: PropTypes.string,
-  maxYear: PropTypes.string,
-  minYear: PropTypes.string,
+  maxYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  minYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   dateFormat: PropTypes.string,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
@@ -1785,6 +1776,102 @@ TimeElement.defaultProps = {
 };
 
 /**
+ * DateTime Component
+ * React wrapper for a <input type="datetime-local"> element.
+ */
+class DateTimeElement extends Component {
+  /**
+   * @constructor
+   * @param {object} props - React Component properties
+   */
+  constructor(props) {
+    super(props);
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  /**
+   * Handle change
+   *
+   * @param {object} e - Event
+   */
+  handleChange(e) {
+    this.props.onUserInput(this.props.name, e.target.value);
+  }
+
+  /**
+   * Renders the React component.
+   *
+   * @return {JSX} - React markup for the component
+   */
+  render() {
+    let disabled = this.props.disabled ? 'disabled' : null;
+    let required = this.props.required ? 'required' : null;
+    let requiredHTML = null;
+    let label;
+    let classSz;
+
+    // Add required asterix
+    if (required) {
+      requiredHTML = <span className="text-danger">*</span>;
+    }
+    if (this.props.label) {
+        label = <label className="col-sm-3 control-label"
+            htmlFor={this.props.label}>
+          {this.props.label}
+          {requiredHTML}
+            </label>;
+        classSz = 'col-sm-9';
+    } else {
+        classSz = 'col-sm-12';
+    }
+
+    return (
+      <div className="row form-group">
+        {label}
+        <div className={classSz}>
+          <input
+            type="datetime-local"
+            className="form-control"
+            name={this.props.name}
+            id={this.props.id}
+            onChange={this.handleChange}
+            value={this.props.value || ''}
+            required={required}
+            disabled={disabled}
+            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-5][0-9])?"
+            title={'Input must be in one of the following formats: '
+                  + 'YYYY-MM-DDTHH:MM or YYYY-MM-DDTHH:MM:SS'}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
+DateTimeElement.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  value: PropTypes.string,
+  id: PropTypes.string,
+  disabled: PropTypes.bool,
+  required: PropTypes.bool,
+  onUserInput: PropTypes.func,
+};
+
+DateTimeElement.defaultProps = {
+  name: '',
+  label: '',
+  value: '',
+  id: '',
+  disabled: false,
+  required: false,
+  onUserInput: function() {
+    console.warn('onUserInput() callback is not set');
+  },
+};
+
+/**
  * Numeric Component
  * React wrapper for a <input type="number"> element.
  */
@@ -1834,7 +1921,7 @@ class NumericElement extends Component {
           {requiredHTML}
         </label>;
         classSz = 'col-sm-9';
-    };
+    }
 
     return (
       <div className={elementClass}>
@@ -1847,6 +1934,7 @@ class NumericElement extends Component {
             id={this.props.id}
             min={this.props.min}
             max={this.props.max}
+            step={this.props.step}
             value={this.props.value || ''}
             disabled={disabled}
             required={required}
@@ -1863,18 +1951,21 @@ NumericElement.propTypes = {
   name: PropTypes.string.isRequired,
   min: PropTypes.number,
   max: PropTypes.number,
+  step: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,
   id: PropTypes.string,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
   onUserInput: PropTypes.func,
+  errorMessage: PropTypes.string,
 };
 
 NumericElement.defaultProps = {
   name: '',
   min: null,
   max: null,
+  step: '1',
   label: '',
   value: '',
   id: null,
@@ -1887,7 +1978,7 @@ NumericElement.defaultProps = {
 
 /**
  * File Component
- * React wrapper for a simple or 'multiple' <select> element.
+ * React wrapper for a simple or 'multiple' <input type="file"> element.
  */
 class FileElement extends Component {
   /**
@@ -1906,8 +1997,10 @@ class FileElement extends Component {
    */
   handleChange(e) {
     // Send current file to parent component
-    const file = e.target.files[0] ? e.target.files[0] : '';
-    this.props.onUserInput(this.props.name, file);
+    const files = e.target.files
+      ? (this.props.allowMultiple ? e.target.files : e.target.files[0])
+      : '';
+    this.props.onUserInput(this.props.name, files);
   }
 
   /**
@@ -1919,6 +2012,7 @@ class FileElement extends Component {
     const required = this.props.required ? 'required' : null;
 
     let fileName = undefined;
+
     if (this.props.value) {
       switch (typeof this.props.value) {
         case 'string':
@@ -1926,7 +2020,12 @@ class FileElement extends Component {
           break;
 
         case 'object':
-          fileName = this.props.value.name;
+          if (this.props.value instanceof FileList) {
+            const files = this.props.value;
+            fileName = Array.from(files).map((file) => file.name).join(', ');
+          } else {
+            fileName = this.props.value.name;
+          }
           break;
 
         default:
@@ -1998,6 +2097,7 @@ class FileElement extends Component {
     } else {
         classSz = 'col-sm-12';
     }
+
     return (
       <div className={elementClass}>
         {labelHTML}
@@ -2019,6 +2119,7 @@ class FileElement extends Component {
                   name={this.props.name}
                   onChange={this.handleChange}
                   required={required}
+                  multiple={this.props.allowMultiple}
                 />
               </div>
             </div>
@@ -2040,6 +2141,7 @@ FileElement.propTypes = {
   id: PropTypes.string,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
+  allowMultiple: PropTypes.bool,
   hasError: PropTypes.bool,
   errorMessage: PropTypes.string,
   onUserInput: PropTypes.func,
@@ -2052,6 +2154,7 @@ FileElement.defaultProps = {
   id: null,
   disabled: false,
   required: false,
+  allowMultiple: false,
   hasError: false,
   errorMessage: 'The field is required!',
   onUserInput: function() {
@@ -2101,9 +2204,9 @@ class StaticElement extends Component {
       <div className="row form-group">
         {label}
         <div className={this.props.class}>
-          <p className={this.props.textClass}>
+          <div className={this.props.textClass}>
             {this.props.text}
-          </p>
+          </div>
         </div>
       </div>
     );
@@ -2118,6 +2221,7 @@ StaticElement.propTypes = {
     PropTypes.string,
     PropTypes.element,
   ]),
+  class: PropTypes.string,
 };
 
 StaticElement.defaultProps = {
@@ -2359,7 +2463,7 @@ class ButtonElement extends Component {
             onClick={this.handleClick}
             disabled={this.props.disabled}
           >
-            {this.props.label}
+            {this.props.disabled ? 'Uploading...' : this.props.label}
           </button>
         </div>
       </div>
@@ -2375,6 +2479,8 @@ ButtonElement.propTypes = {
   disabled: PropTypes.bool,
   style: PropTypes.object,
   onUserInput: PropTypes.func,
+  columnSize: PropTypes.string,
+  buttonClass: PropTypes.string,
 };
 
 ButtonElement.defaultProps = {
@@ -2506,6 +2612,10 @@ class LorisElement extends Component {
     return elementHtml;
   }
 }
+LorisElement.propTypes = {
+  element: PropTypes.object,
+  onUserInput: PropTypes.string,
+};
 
 /**
  * Radio Component
@@ -2549,7 +2659,7 @@ class RadioElement extends React.Component {
 
     const styleRow = {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: this.props.vertical ? 'column' : 'row',
       flexWrap: 'wrap',
       width: '100%',
     };
@@ -2657,6 +2767,7 @@ RadioElement.propTypes = {
   options: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
+  vertical: PropTypes.bool,
   checked: PropTypes.string.isRequired,
   errorMessage: PropTypes.string,
   elementClass: PropTypes.string,
@@ -2665,6 +2776,7 @@ RadioElement.propTypes = {
 RadioElement.defaultProps = {
   disabled: false,
   required: false,
+  vertical: false,
   errorMessage: '',
   elementClass: 'row form-group',
   onUserInput: function() {
@@ -2828,6 +2940,7 @@ window.EmailElement = EmailElement;
 window.PasswordElement = PasswordElement;
 window.DateElement = DateElement;
 window.TimeElement = TimeElement;
+window.DateTimeElement = DateTimeElement;
 window.NumericElement = NumericElement;
 window.FileElement = FileElement;
 window.StaticElement = StaticElement;
@@ -2851,6 +2964,7 @@ export default {
   PasswordElement,
   DateElement,
   TimeElement,
+  DateTimeElement,
   NumericElement,
   FileElement,
   StaticElement,

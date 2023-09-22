@@ -153,7 +153,7 @@ class RequestAccount extends Component {
           name={'requestAccount'}
           action={''}
           id={'form'}
-          fileUpload={'false'}
+          fileUpload={false}
           onSubmit={this.handleSubmit}
         >
           <StaticElement
@@ -261,6 +261,10 @@ RequestAccount.propTypes = {
   module: PropTypes.string,
   setMode: PropTypes.func,
   data: PropTypes.object,
+
+  defaultFirstName: PropTypes.string,
+  defaultLastName: PropTypes.string,
+  defaultEmail: PropTypes.string,
 };
 
 export default RequestAccount;

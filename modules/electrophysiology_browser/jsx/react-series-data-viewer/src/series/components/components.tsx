@@ -25,7 +25,8 @@ interface IHandleProps {
  * @param root0.handle.percent
  * @param root0.getHandleProps
  */
-export const Handle: React.SFC<IHandleProps> = ({
+
+export const Handle: React.FC<IHandleProps> = ({
   domain: [min, max],
   handle: {id, value, percent},
   getHandleProps,
@@ -38,14 +39,14 @@ export const Handle: React.SFC<IHandleProps> = ({
     style={{
       left: `${percent}%`,
       position: 'absolute',
-      marginLeft: '-9px',
-      marginTop: '-9px',
+      marginLeft: '-5px',
+      marginTop: '-5px',
       zIndex: 2,
-      width: 18,
-      height: 18,
+      width: 10,
+      height: 10,
       cursor: 'pointer',
       boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)',
-      border: '3px solid #064785',
+      border: '2px solid #064785',
       background: '#fff',
       borderRadius: '50%',
     }}

@@ -6,18 +6,19 @@ import {createEpicMiddleware} from 'redux-observable';
 import thunk from 'redux-thunk';
 import {fetchJSON, fetchText} from '../ajax';
 import {rootReducer, rootEpic} from '../series/store';
-import {MAX_CHANNELS} from '../vector';
+import {DEFAULT_MAX_CHANNELS, DEFAULT_TIME_INTERVAL} from '../vector';
 import {
   setChannels,
+  emptyChannels,
+} from '../series/store/state/channels';
+import {
   setEpochs,
   setDatasetMetadata,
   setPhysioFileID,
-  emptyChannels,
+  setFilteredEpochs,
 } from '../series/store/state/dataset';
 import {setDomain, setInterval} from '../series/store/state/bounds';
-import {updateFilteredEpochs} from '../series/store/logic/filterEpochs';
 import {setElectrodes} from '../series/store/state/montage';
-import {Channel} from '../series/store/types';
 import {AnnotationMetadata, EventMetadata} from '../series/store/types';
 
 declare global {
@@ -41,9 +42,6 @@ type CProps = {
  */
 class EEGLabSeriesProvider extends Component<CProps> {
   private store: Store;
-  public state: {
-    channels: Channel[]
-  };
 
   /**
    * @class
@@ -57,12 +55,6 @@ class EEGLabSeriesProvider extends Component<CProps> {
       rootReducer,
       applyMiddleware(thunk, epicMiddleware)
     );
-
-    this.state = {
-      channels: [],
-    };
-
-    this.store.subscribe(this.listener.bind(this));
 
     epicMiddleware.run(rootEpic);
 
@@ -115,11 +107,11 @@ class EEGLabSeriesProvider extends Component<CProps> {
             })
           );
           this.store.dispatch(setChannels(emptyChannels(
-              Math.min(limit, channelMetadata.length),
+              Math.min(this.props.limit, channelMetadata.length),
               1
           )));
           this.store.dispatch(setDomain(timeInterval));
-          this.store.dispatch(setInterval(timeInterval));
+          this.store.dispatch(setInterval(DEFAULT_TIME_INTERVAL));
         }
       }).then(() => {
         return events.instances.map((instance) => {
@@ -168,7 +160,7 @@ class EEGLabSeriesProvider extends Component<CProps> {
             })
           )
         );
-        this.store.dispatch(updateFilteredEpochs());
+        this.store.dispatch(setFilteredEpochs(epochs.map((_, index) => index)));
       })
     ;
 
@@ -192,15 +184,6 @@ class EEGLabSeriesProvider extends Component<CProps> {
   }
 
   /**
-   * Store update listener
-   */
-  listener() {
-    this.setState({
-      channels: this.store.getState().dataset.channels,
-    });
-  }
-
-  /**
    * Renders the React component.
    *
    * @returns {JSX} - React markup for the component
@@ -209,14 +192,14 @@ class EEGLabSeriesProvider extends Component<CProps> {
     const [signalViewer, ...rest] = React.Children.toArray(this.props.children);
     return (
       <Provider store={this.store}>
-        {(this.state.channels.length > 0) && signalViewer}
+        {signalViewer}
         {rest}
       </Provider>
     );
   }
 
   static defaultProps = {
-    limit: MAX_CHANNELS,
+    limit: DEFAULT_MAX_CHANNELS,
   };
 }
 
